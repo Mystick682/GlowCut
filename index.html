@@ -1,5 +1,16 @@
 <!DOCTYPE html><html lang="en">
 <head>
+  <style>
+  .hamburger.active .bar:nth-child(1) {
+    transform: rotate(45deg) translateY(10px);
+  }
+  .hamburger.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+  .hamburger.active .bar:nth-child(3) {
+    transform: rotate(-45deg) translateY(-10px);
+  }
+</style>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GlowCut – Premium Grooming</title>  <!-- Google Fonts -->  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter&display=swap" rel="stylesheet">  <!-- Tailwind CDN -->  <script src="https://cdn.tailwindcss.com"></script>  <!-- Tailwind Config -->  <script>
@@ -34,7 +45,11 @@
     </ul>
     <!-- Mobile Menu Button -->
     <div class="md:hidden">
-      <button id="mobileMenuBtn" class="text-gold focus:outline-none text-3xl">&#9776;</button>
+      <button id="mobileMenuBtn" class="hamburger relative w-8 h-6 flex flex-col justify-between items-center z-50 focus:outline-none">
+  <span class="bar w-full h-1 bg-gold rounded transition-transform duration-300"></span>
+  <span class="bar w-full h-1 bg-gold rounded transition-transform duration-300"></span>
+  <span class="bar w-full h-1 bg-gold rounded transition-transform duration-300"></span>
+</button>
     </div>
   </div>
 
@@ -61,6 +76,7 @@
   </p>
 </div>
 </div>
+
 </header>
   </section>
 
@@ -171,6 +187,7 @@
 
     menuBtn.addEventListener("click", () => {
       mobileMenu.classList.toggle("hidden");
+      menuBtn.classList.toggle("active"); // 👈 this line triggers the rotation
     });
   });
 </script>
