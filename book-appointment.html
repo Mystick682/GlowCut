@@ -2,92 +2,93 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Book Appointment – GlowCut</title>
-
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Tailwind Custom Config -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            heading: ['Playfair Display', 'serif'],
-            body: ['Inter', 'sans-serif']
-          },
-          colors: {
-            gold: '#E3C68C',
-            dark: '#1C1C1C',
-            light: '#F5F5F5',
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter&display=swap" rel="stylesheet">
+  <script src="https://checkout.flutterwave.com/v3.js"></script>
 </head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 text-center">Book Appointment</h2>
 
-<body class="bg-light font-body flex items-center justify-center min-h-screen px-4">
+    <form id="appointment-form">
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Full Name</label>
+        <input id="name" type="text" placeholder="Your full name" required
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"/>
+      </div>
 
-  <div class="bg-white shadow-2xl rounded-2xl w-full max-w-lg p-8 border border-gold">
-    <h2 class="text-3xl font-heading text-center text-dark mb-4">Book Your Appointment</h2>
-    <p class="text-center text-gray-500 mb-6 text-sm">Let's get you groomed to perfection 💈</p>
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="phone">Phone Number</label>
+        <input id="phone" type="tel" placeholder="08012345678" required
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"/>
+      </div>
 
-    <form id="appointmentForm" class="space-y-4">
-      <input id="name" name="name" type="text" required placeholder="Your Name"
-        class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-gold focus:outline-none transition"/>
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email Address</label>
+        <input id="email" type="email" placeholder="your@email.com" required
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"/>
+      </div>
 
-      <input id="service" name="service" type="text" required readonly
-        class="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-md text-gray-600 cursor-not-allowed"/>
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2">Selected Service:</label>
+        <p id="selected-service" class="text-lg font-semibold text-green-700">Loading...</p>
+      </div>
 
-      <input id="date" name="date" type="date" required
-        class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-gold focus:outline-none transition"/>
+      <div class="mb-6">
+        <label class="block text-gray-700 text-sm font-bold mb-2">Price:</label>
+        <p id="selected-price" class="text-lg font-semibold text-green-700">₦0</p>
+      </div>
 
-      <input id="time" name="time" type="time" required
-        class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-gold focus:outline-none transition"/>
-
-      <textarea id="note" name="note" rows="3" placeholder="Optional message..."
-        class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-gold focus:outline-none transition"></textarea>
-
-      <button type="submit"
-        class="w-full py-3 bg-gold text-dark rounded-md font-semibold hover:bg-dark hover:text-white transition duration-300">
-        Send to WhatsApp
+      <button type="button" onclick="makePayment()"
+        class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        Pay with Flutterwave
       </button>
     </form>
-
-    <div class="mt-6 text-center">
-      <a href="shop now.html" class="text-sm text-gold hover:text-dark transition">← Back to Services</a>
-    </div>
   </div>
 
   <script>
-    // Set service from URL param
     const urlParams = new URLSearchParams(window.location.search);
-    const service = urlParams.get('service');
-    if (service) {
-      document.getElementById('service').value = decodeURIComponent(service);
+    const service = urlParams.get("service") || "Not specified";
+    const price = parseFloat(urlParams.get("price")) || 0;
+
+    document.getElementById("selected-service").textContent = service;
+    document.getElementById("selected-price").textContent = "₦" + price.toLocaleString();
+
+    function makePayment() {
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const phone = document.getElementById("phone").value;
+
+      if (!name || !email || !phone) {
+        alert("Please fill in all required fields before making payment.");
+        return;
+      }
+
+      FlutterwaveCheckout({
+        public_key: "FLWPUBK_TEST-495d88df9db19c0552e79b9e4cfd670a-X",
+        tx_ref: "glowcut_" + Date.now(),
+        amount: price,
+        currency: "NGN",
+        payment_options: "card,banktransfer,ussd",
+        customer: {
+          email: email,
+          phone_number: phone,
+          name: name,
+        },
+        customizations: {
+          title: "GlowCut Barbershop",
+          description: `Payment for ${service}`,
+          logo: "https://yourdomain.com/logo.png",
+        },
+        callback: function (response) {
+          alert("Payment Successful. Reference: " + response.transaction_id);
+        },
+        onclose: function () {
+          alert("Payment popup closed");
+        },
+      });
     }
-
-    const form = document.getElementById('appointmentForm');
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const name = document.getElementById('name').value.trim();
-      const service = document.getElementById('service').value.trim();
-      const date = document.getElementById('date').value;
-      const time = document.getElementById('time').value;
-      const note = document.getElementById('note').value.trim();
-
-      const message = 
-        'Hello GlowCut!%0A%0AI would like to book an appointment:%0A%0A🧑 Name: ${encodeURIComponent(name)}%0A✂ Service: ${encodeURIComponent(service)}%0A📅 Date: ${date}%0A⏰ Time: ${time}%0A📝 Note: ${encodeURIComponent(note || N/A)}';
-
-      const phoneNumber = '2349067497496'; // Replace with your number
-      window.open('https://wa.me/${phoneNumber}?text=${message}', '_blank');
-    });
   </script>
 </body>
 </html>
