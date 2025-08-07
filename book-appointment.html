@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book Appointment – GlowCut</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind Custom Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['Playfair Display', 'serif'],
+            body: ['Inter', 'sans-serif']
+          },
+          colors: {
+            gold: '#E3C68C',
+            dark: '#1C1C1C',
+            light: '#F5F5F5',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-light font-body flex items-center justify-center min-h-screen px-4">
+
+  <div class="bg-white shadow-2xl rounded-2xl w-full max-w-lg p-8 border border-gold">
+    <h2 class="text-3xl font-heading text-center text-dark mb-4">Book Your Appointment</h2>
+    <p class="text-center text-gray-500 mb-6 text-sm">Let's get you groomed to perfection 💈</p>
+
+    <form id="appointmentForm" class="space-y-4">
+      <input id="name" name="name" type="text" required placeholder="Your Name"
+        class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-gold focus:outline-none transition"/>
+
+      <input id="service" name="service" type="text" required readonly
+        class="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-md text-gray-600 cursor-not-allowed"/>
+
+      <input id="date" name="date" type="date" required
+        class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-gold focus:outline-none transition"/>
+
+      <input id="time" name="time" type="time" required
+        class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-gold focus:outline-none transition"/>
+
+      <textarea id="note" name="note" rows="3" placeholder="Optional message..."
+        class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-gold focus:outline-none transition"></textarea>
+
+      <button type="submit"
+        class="w-full py-3 bg-gold text-dark rounded-md font-semibold hover:bg-dark hover:text-white transition duration-300">
+        Send to WhatsApp
+      </button>
+    </form>
+
+    <div class="mt-6 text-center">
+      <a href="shop now.html" class="text-sm text-gold hover:text-dark transition">← Back to Services</a>
+    </div>
+  </div>
+
+  <script>
+    // Set service from URL param
+    const urlParams = new URLSearchParams(window.location.search);
+    const service = urlParams.get('service');
+    if (service) {
+      document.getElementById('service').value = decodeURIComponent(service);
+    }
+
+    const form = document.getElementById('appointmentForm');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const service = document.getElementById('service').value.trim();
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+      const note = document.getElementById('note').value.trim();
+
+      const message = 
+        'Hello GlowCut!%0A%0AI would like to book an appointment:%0A%0A🧑 Name: ${encodeURIComponent(name)}%0A✂ Service: ${encodeURIComponent(service)}%0A📅 Date: ${date}%0A⏰ Time: ${time}%0A📝 Note: ${encodeURIComponent(note || N/A)}';
+
+      const phoneNumber = '2349067497496'; // Replace with your number
+      window.open('https://wa.me/${phoneNumber}?text=${message}', '_blank');
+    });
+  </script>
+</body>
+</html>
